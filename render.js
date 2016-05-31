@@ -89,7 +89,8 @@
 
 //			mesh: icosphere(gl, 3, 100.0, [100, 140, 50, 255]),
 //			mesh: cylinder(gl, 16, 200.0, 50.0, 50.0, [100, 140, 50, 255]),
-			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [100, 120, 180, 255]),
+//			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [100, 120, 180, 255]),
+			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [255, 255, 255, 255]),
 
 		};
 	}
@@ -154,7 +155,7 @@
 
 		var modelView = view;
 		var normalMatrix = modelView.Copy().Inverse().Transpose();
-		var modelViewProj = viewProj;
+		//var modelViewProj = viewProj;
 
 		// render the triangles
 		var prog = this.triangleProg;
@@ -203,6 +204,7 @@
 
 
 		//gl.disable(gl.DEPTH_TEST);
+		gl.depthMask(true);
 		//gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ONE);// UNDER
 		gl.drawArrays(gl.POINTS, 0, 3*scene.mesh.ntris);
 

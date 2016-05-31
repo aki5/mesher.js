@@ -5,6 +5,8 @@
 <head>
 <meta charset="utf-8"/>
 
+<script src="all.js"></script>
+<!--
 <script src="libgeom.js/mat4.js"></script>
 <script src="libgeom.js/math.js"></script>
 <script src="libgeom.js/mesh.js"></script>
@@ -14,6 +16,7 @@
 <script src="libgeom.js/select.js"></script>
 <script src="render.js"></script>
 <script src="main.js"></script>
+-->
 
 <script id="flipnormalshader" type="x-shader/x-vertex">
 uniform mat4 mvp_matrix;
@@ -86,6 +89,7 @@ void main()
 </script>
 
 <script id="dotshader" type="x-shader/x-fragment">
+// TODO: draw the dot if and only if dotcent passes the depth test.
 precision highp float;
 varying highp float v_Dot;
 varying lowp vec4 v_Color;
@@ -94,10 +98,13 @@ varying lowp float dotsize;
 
 void main() {
 	float dist = distance(gl_FragCoord.xy, dotcent);
-	if(dist > dotsize || dist < dotsize-2.0)
-		gl_FragColor = vec4(0.0);
-	else
+	float diff = min(dist-dotsize+1.0, 1.0);
+	if(diff > 0.0){
+		// smooth blend at the edge
+		gl_FragColor = vec4(0.0, 0.0, 0.0, (1.0-diff)*v_Color.a);
+	} else {
 		gl_FragColor = vec4((v_Color.xyz) * v_Dot, v_Color.a);
+	}
 }
 </script>
 

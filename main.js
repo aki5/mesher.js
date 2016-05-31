@@ -33,6 +33,8 @@
 		}
 		var context = create3DContext(canvas, options);
 		if (!context) {
+			console.log("failed to create 3d context for canvas, options: " + options);
+			return null;
 		}
 		return context;
 	};
@@ -126,7 +128,7 @@
 	}
 
 	function main(){
-		var gl = windowSetup();
+		windowSetup();
 	}
 
 	window["main"] = main;
