@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+
+<html style="height:100%;" >
+<head>
+<meta charset="utf-8"/>
+
+<script src="libgeom.js/mat4.js"></script>
+<script src="libgeom.js/math.js"></script>
+<script src="libgeom.js/mesh.js"></script>
+<script src="libgeom.js/geom.js"></script>
+<script src="libgeom.js/mouse.js"></script>
+<script src="libgeom.js/camera.js"></script>
+<script src="libgeom.js/select.js"></script>
+<script src="render.js"></script>
+<script src="main.js"></script>
+
+<script id="flipnormalshader" type="x-shader/x-vertex">
+uniform mat4 mvp_matrix;
+uniform mat4 normal_matrix;
+uniform vec3 light0dir;
+uniform vec3 light1dir;
+uniform vec3 light2dir;
+
+uniform vec4 edgecolor;
+uniform float edgedisp;
+
+uniform vec2 fullwin;
+
+attribute vec4 position;
+attribute vec3 normal;
+attribute vec4 color;
+
+varying highp float v_Dot;
+varying lowp vec4 v_Color;
+varying lowp vec2 dotcent;
+varying lowp float dotsize;
+
+
+void main()
+{
+	vec4 transPos = position + edgedisp*vec4(normal, 0.0);
+	vec4 transNormal = normal_matrix * vec4(normal, 1);
+
+	gl_Position = mvp_matrix * transPos;
+	float ndc_z = gl_Position.z / gl_Position.w;
+
+	float l0dot = dot(transNormal.xyz, (normal_matrix * vec4(light0dir,1)).xyz);
+	float l1dot = dot(transNormal.xyz, (normal_matrix * vec4(light1dir,1)).xyz);
+	float l2dot = dot(transNormal.xyz, (normal_matrix * vec4(light2dir,1)).xyz);
+
+	v_Dot = max(max(l0dot, 0.0) + max(l1dot, 0.0)+ max(l2dot, 0.0), 0.2);
+	v_Color = edgecolor[3] == 0.0 ? color : edgecolor;
+	gl_PointSize = 200.0*(1.0 - ndc_z);
+
+	vec2 halfwin = 0.5 * fullwin;
+	dotcent = halfwin + halfwin*(gl_Position.xy / gl_Position.w);
+	dotsize = 0.5*gl_PointSize;
+}
+</script>
+
+<script id="flatshader" type="x-shader/x-fragment">
+precision highp float;
+varying highp float v_Dot;
+varying lowp vec4 v_Color;
+varying lowp vec2 dotcent;
+varying lowp float dotsize;
+
+void main()
+{
+	gl_FragColor = vec4((v_Color.xyz) * v_Dot, v_Color.a);
+}
+</script>
+
+<script id="edgeshader" type="x-shader/x-fragment">
+precision highp float;
+varying highp float v_Dot;
+varying lowp vec4 v_Color;
+varying lowp vec2 dotcent;
+varying lowp float dotsize;
+
+void main()
+{
+	gl_FragColor = vec4((v_Color.xyz) * v_Dot, v_Color.a);
+}
+</script>
+
+<script id="dotshader" type="x-shader/x-fragment">
+precision highp float;
+varying highp float v_Dot;
+varying lowp vec4 v_Color;
+varying lowp vec2 dotcent;
+varying lowp float dotsize;
+
+void main() {
+	float dist = distance(gl_FragCoord.xy, dotcent);
+	if(dist > dotsize || dist < dotsize-2.0)
+		gl_FragColor = vec4(0.0);
+	else
+		gl_FragColor = vec4((v_Color.xyz) * v_Dot, v_Color.a);
+}
+</script>
+
+
+</head>
+
+
+<body onload="main()" style="height:98%; overflow:auto;">
+
+<ul>
+<li>Click-drag to move objects on a plane</li>
+<li>Shift-drag to rotate camera around pivot</li>
+<li>Drag-and-drop or use the button below to import binary stl files</li>
+</ul>
+
+<div style="float:left;">
+	<input id="import-button" buttonText="import stl" type="file" name="files[]" multiple></input>
+</div>
+
+<div id="drop-area" style="width:100%;height:85%;">
+	<canvas id="glcanvas" style="width:100%;height:100%;">
+		It appears your browser has no canvas support, try using a different browser
+	</canvas>
+</div>
+
+<div id="error" style="background-color: white; color:darkred; height:0;"></div>
+
+</body>
+</html>
