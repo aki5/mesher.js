@@ -87,10 +87,10 @@
 			light1: camera.New(200.0, [0.0, 0.0, 0.0], 3*(2*Math.PI/5), Math.PI/5),
 			light2: camera.New(200.0, [0.0, 0.0, 0.0], 4*(2*Math.PI/5), Math.PI/7),
 
-//			mesh: icosphere(gl, 3, 100.0, [100, 140, 50, 255]),
+			mesh: icosphere(gl, 3, 100.0, [100, 140, 50, 255]),
 //			mesh: cylinder(gl, 16, 200.0, 50.0, 50.0, [100, 140, 50, 255]),
 //			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [100, 120, 180, 255]),
-			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [255, 255, 255, 255]),
+//			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [255, 255, 255, 255]),
 
 		};
 	}
@@ -136,6 +136,8 @@
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.enable(gl.DEPTH_TEST);
 		gl.enable(gl.BLEND);
+		gl.depthMask(true);
+
 		//gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ONE);// UNDER
 		gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);// OVER
 		//gl.pointSize(10);
@@ -204,7 +206,7 @@
 
 
 		//gl.disable(gl.DEPTH_TEST);
-		gl.depthMask(true);
+		gl.depthMask(false);
 		//gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ONE);// UNDER
 		gl.drawArrays(gl.POINTS, 0, 3*scene.mesh.ntris);
 
