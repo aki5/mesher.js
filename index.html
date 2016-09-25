@@ -46,7 +46,6 @@ void main()
 	vec4 transNormal = normal_matrix * vec4(normal, 1);
 
 	gl_Position = mvp_matrix * transPos;
-	float ndc_z = gl_Position.z / gl_Position.w;
 
 	float l0dot = dot(transNormal.xyz, (normal_matrix * vec4(light0dir,1)).xyz);
 	float l1dot = dot(transNormal.xyz, (normal_matrix * vec4(light1dir,1)).xyz);
@@ -54,7 +53,7 @@ void main()
 
 	v_Dot = max(max(l0dot, 0.0) + max(l1dot, 0.0)+ max(l2dot, 0.0), 0.2);
 	v_Color = edgecolor[3] == 0.0 ? color : edgecolor;
-	gl_PointSize = 200.0*(1.0 - ndc_z);
+	gl_PointSize = 5000.0 / gl_Position.w;
 
 	vec2 halfwin = 0.5 * fullwin;
 	dotcent = halfwin + halfwin*(gl_Position.xy / gl_Position.w);
@@ -114,11 +113,29 @@ void main() {
 
 <body onload="main()" style="height:98%; overflow:auto;">
 
-<ul>
-<li>Click-drag to move objects on a plane</li>
-<li>Shift-drag to rotate camera around pivot</li>
-<li>Drag-and-drop or use the button below to import binary stl files</li>
-</ul>
+<table>
+<td>
+	<ul>
+	<li>Click-drag to move objects on a plane</li>
+	<li>Shift-drag to rotate camera around pivot</li>
+	<li>Drag-and-drop or use the button below to import binary stl files</li>
+	</ul>
+</td>
+<td>
+	<input id="light0Pitch" type="range" min="-90" max="90" ></input>
+	<input id="light0Yaw" type="range" min="-180" max="180" ></input>
+	<br>
+
+	<input id="light1Pitch" type="range" min="-90" max="90" ></input>
+	<input id="light1Yaw" type="range" min="-180" max="180" ></input>
+	<br>
+
+	<input id="light2Pitch" type="range" min="-90" max="90" ></input>
+	<input id="light2Yaw" type="range" min="-180" max="180" ></input>
+	<br>
+
+</td>
+</table>
 
 <div style="float:left;">
 	<input id="import-button" buttonText="import stl" type="file" name="files[]" multiple></input>

@@ -2,10 +2,7 @@
 (function(window){
 	"use strict";
 
-	var cam = camera.New();
-	cam.dist = 400;
-	cam.yaw = Math.PI/3.0;
-	cam.pitch = Math.PI/5.0;
+	var renderer;
 
 	/*
 	 *	I suspect the following create3DContext / setupWebGL rubbish is no longer necessary.
@@ -48,7 +45,7 @@
 			return;
 		}
 
-		var renderer = render.New(gl, canvas);
+		renderer = render.New(gl, canvas);
 
 		window.addEventListener("resize",
 			function(ev) {
@@ -129,6 +126,99 @@
 
 	function main(){
 		windowSetup();
+
+		var light0Pitch = document.getElementById("light0Pitch");
+		if(!light0Pitch){
+			console.log("lightpitch element not found in document");
+		} else {
+			light0Pitch.addEventListener("input",
+				function(ev){
+					var pitch = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light0.SetPitch(pitch);
+					renderer.Kick();
+					console.log("setting pitch to '" + pitch + "'");
+				},
+				false
+			);
+		}
+
+		var light1Pitch = document.getElementById("light1Pitch");
+		if(!light1Pitch){
+			console.log("lightpitch element not found in document");
+		} else {
+			light1Pitch.addEventListener("input",
+				function(ev){
+					var pitch = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light1.SetPitch(pitch);
+					renderer.Kick();
+					console.log("setting pitch to '" + pitch + "'");
+				},
+				false
+			);
+		}
+
+		var light2Pitch = document.getElementById("light2Pitch");
+		if(!light2Pitch){
+			console.log("lightpitch element not found in document");
+		} else {
+			light2Pitch.addEventListener("input",
+				function(ev){
+					var pitch = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light2.SetPitch(pitch);
+					renderer.Kick();
+					console.log("setting pitch to '" + pitch + "'");
+				},
+				false
+			);
+		}
+
+
+		var light0Yaw = document.getElementById("light0Yaw");
+		if(!light0Yaw){
+			console.log("lightpitch element not found in document");
+		} else {
+			light0Yaw.addEventListener("input",
+				function(ev){
+					var yaw = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light0.SetYaw(yaw);
+					renderer.Kick();
+					console.log("setting yaw to '" + yaw + "'");
+				},
+				false
+			);
+		}
+
+		var light1Yaw = document.getElementById("light1Yaw");
+		if(!light1Yaw){
+			console.log("lightpitch element not found in document");
+		} else {
+			light1Yaw.addEventListener("input",
+				function(ev){
+					var yaw = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light1.SetYaw(yaw);
+					renderer.Kick();
+					console.log("setting yaw to '" + yaw + "'");
+				},
+				false
+			);
+		}
+
+		var light2Yaw = document.getElementById("light2Yaw");
+		if(!light2Yaw){
+			console.log("lightpitch element not found in document");
+		} else {
+			light2Yaw.addEventListener("input",
+				function(ev){
+					var yaw = ev.target.valueAsNumber / 180.0 * Math.PI;
+					renderer.scene.light2.SetYaw(yaw);
+					renderer.Kick();
+					console.log("setting yaw to '" + yaw + "'");
+				},
+				false
+			);
+		}
+
+
 	}
 
 	window["main"] = main;
