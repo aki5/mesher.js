@@ -76,6 +76,26 @@
 		gl.enableVertexAttribArray(1);
 		gl.enableVertexAttribArray(2);
 
+		var model = modeler.New();
+
+		model.Push().Scale([50, 50, 50, 1]);
+		model.Push().Translate([0, 0, -1, 0]);
+		var circle0 = model.Circle(-1);
+		model.Pop();
+
+		model.Push().Translate([0, 0, 1, 0]);
+		var circle1 = model.Circle(-1);
+		model.Pop();
+
+//model.DumpEdges();
+		var cyl = model.CylinderTo(circle0, circle1, -1);
+
+		model.Triangulate();
+		model.Load(gl);
+
+//model.DumpVerts();
+
+
 		this.scene = {
 			camera0: camera.New(400.0, [0.0, 0.0, 0.0], Math.PI/3.0, Math.PI/5.0),
 
@@ -91,6 +111,7 @@
 			mesh: cylinder(gl, 16, 200.0, 50.0, 50.0, [100, 140, 50, 255]),
 //			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [100, 120, 180, 255]),
 //			mesh: cylinder(gl, 20, 200.0, 50.0, 50.0, [255, 255, 255, 255]),
+			model: model
 
 		};
 	}
@@ -159,7 +180,10 @@
 		var normalMatrix = modelView.Copy().Inverse().Transpose();
 		//var modelViewProj = viewProj;
 
+		scene.model.Bind(gl);
+
 		// render the triangles
+/**/
 		var prog = this.triangleProg;
 		gl.useProgram(prog);
 		gl.uniform3fv(prog.locs["light0dir"], light0dir);
@@ -172,9 +196,10 @@
 		gl.uniform2fv(prog.locs["fullwin"], [canvas.width, canvas.height]);
 
 		gl.depthFunc(gl.LESS);
-		scene.mesh.Bind(gl);
-		gl.drawElements(gl.TRIANGLES, 3*scene.mesh.ntris, gl.UNSIGNED_SHORT, 0);
+		scene.model.BindTriangles(gl);
+		gl.drawElements(gl.TRIANGLES, 3*scene.model.numTriangles, gl.UNSIGNED_SHORT, 0);
 
+/**/
 		// render the edges
 		var prog = this.edgeProg;
 		gl.useProgram(prog);
@@ -188,11 +213,12 @@
 		gl.uniform2fv(prog.locs["fullwin"], [canvas.width, canvas.height]);
 
 		gl.lineWidth(2.0);
-		scene.mesh.BindEdges(gl);
+		scene.model.BindEdges(gl);
 		//gl.disable(gl.DEPTH_TEST);
-		gl.drawElements(gl.LINES, 6*scene.mesh.ntris, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.LINES, scene.model.numEdges, gl.UNSIGNED_SHORT, 0);
 
 		// render the vertices
+/**/
 		var prog = this.dotProg;
 		gl.useProgram(prog);
 		gl.uniform3fv(prog.locs["light0dir"], light0dir);
@@ -208,7 +234,8 @@
 		//gl.disable(gl.DEPTH_TEST);
 		gl.depthMask(false);
 		//gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ONE);// UNDER
-		gl.drawArrays(gl.POINTS, 0, 3*scene.mesh.ntris);
+		gl.drawArrays(gl.POINTS, 0, scene.model.numVerts);
+
 
 		this.drawSeq++;
 	}

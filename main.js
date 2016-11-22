@@ -219,6 +219,17 @@
 		}
 
 
+//modlr.DumpEdges();
+/*
+		for(var i = 0; i < 10; i++){
+			console.log("cur " + i + " Next: " + modlr.Next(i));
+			console.log("cur " + i + " Prev: " + modlr.Prev(i));
+			console.log("cur " + i + " Right: " + modlr.Right(i));
+			console.log("cur " + i + " Flip: " + modlr.Flip(i));
+			console.log("cur " + i + " Left: " + modlr.Left(i));
+		}
+*/
+
 	}
 
 	window["main"] = main;
